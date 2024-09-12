@@ -1,44 +1,45 @@
-import plotly.express as px
-import plotly
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 
-
+# Load data
 money = pd.read_csv("money_data7.csv")
 
-option = st.selectbox(
-    'How would you like to choice year ?',
-    ('2020', '2021', '2022'))
-
+# User input for year selection
+option = st.selectbox('Choose a year:', ('2020', '2021', '2022'))
 option2 = int(option)
 
 st.write('You selected:', option)
 
-money = money[:] [money['A_YEAR']== option2]
+# Filter data for the selected year
+filtered_money = money[money['A_YEAR'] == option2]
 
-fig, ax = plt.subplots(2,2, figsize=(12,8))
+# Define plot settings
+fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+months = filtered_money['A_MONTH']
 
-plt.subplot(221)
-plt.plot(  list( money['A_MONTH'] ), list( money['A_RATE'] ), color='red' , marker='o'     ) 
-plt.xticks(tuple(money['A_MONTH']) )
-plt.title('America rate')
+# Plot American rate
+axs[0, 0].plot(months, filtered_money['A_RATE'], color='red', marker='o')
+axs[0, 0].set_title('America rate')
+axs[0, 0].set_xticks(months)
 
+# Plot Korean rate
+axs[0, 1].plot(months, filtered_money['K_RATE'], color='blue', marker='o')
+axs[0, 1].set_title('Korea rate')
+axs[0, 1].set_xticks(months)
 
-plt.subplot(222)
-plt.plot(  list( money['A_MONTH'] ), list( money['K_RATE'] ), color='blue' , marker='o'     ) 
-plt.xticks(tuple(money['A_MONTH']) )
-plt.title('Korea rate')
+# Plot Kospi rate
+axs[1, 0].plot(months, filtered_money['KOSPI'], color='green', marker='o')
+axs[1, 0].set_title('Kospi Rate')
+axs[1, 0].set_xticks(months)
 
-plt.subplot(223)
-plt.plot(  list( money['A_MONTH'] ), list( money['KOSPI'] ), color='green' , marker='o'     ) 
-plt.xticks(tuple(money['A_MONTH']) )
-plt.title('Kospi Rate')
+# Plot House price
+axs[1, 1].plot(months, filtered_money['HOUSE_PRICE'], color='yellow', marker='o')
+axs[1, 1].set_title('House Price')
+axs[1, 1].set_xticks(months)
 
-plt.subplot(224)
-plt.plot(  list( money['A_MONTH'] ), list( money['HOUSE_PRICE'] ), color='yellow' , marker='o'     ) 
-plt.xticks(tuple(money['A_MONTH']) )
-plt.title('House Price')
+# Adjust layout
+plt.tight_layout()
 
+# Display the plot in Streamlit
 st.pyplot(fig)
